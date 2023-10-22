@@ -18,7 +18,7 @@ abstract class AuthenticationRemoteDataSource {
 }
 
 const kCreateUserEndpoint = '/test-api/users';
-const kGetUserEndpoint = "/test-api/user";
+const kGetUserEndpoint = "/test-api/users";
 
 class AuthRemoteDataSourceImpl implements AuthenticationRemoteDataSource {
   const AuthRemoteDataSourceImpl(this._client);
@@ -26,21 +26,22 @@ class AuthRemoteDataSourceImpl implements AuthenticationRemoteDataSource {
   final http.Client _client;
 
   @override
-  Future<void> createUser({required String createdAt,
-    required String name,
-    required String avatar}) async {
+  Future<void> createUser(
+      {required String createdAt,
+      required String name,
+      required String avatar}) async {
     //1.check to make sure that it returns the right data when status code is 200
     //or the proper response code
     //2.check to make sure that it "THROW A CUSTOM EXCEPTION" with the right message
     //when status code is the one base
     try {
       final response = await _client.post(
-        Uri.parse('$kBaseUrl$kCreateUserEndpoint'),
-        body: jsonEncode(
-            {'createdAt': createdAt, 'name': name, 'avatar': avatar}),
-      );
+          Uri.https(kBaseUrl, kCreateUserEndpoint),
+          body: jsonEncode(
+              {'createdAt': createdAt, 'name': name, 'avatar': avatar}),
+          headers: {'Content-Type': 'application/json'});
 
-      if (response.statusCode != 200 && response.statusCode != 201) {
+      if (response.statusCode != 201) {
         throw APIException(
             message: response.body, statusCode: response.statusCode);
       }
@@ -56,7 +57,7 @@ class AuthRemoteDataSourceImpl implements AuthenticationRemoteDataSource {
   Future<List<UserModel>> getUsers() async {
     try {
       final response = await _client.get(Uri.https(kBaseUrl, kGetUserEndpoint));
-      if (response.statusCode != 200 || response.statusCode != 201) {
+      if (response.statusCode != 200) {
         throw APIException(
             message: response.body, statusCode: response.statusCode);
       }
