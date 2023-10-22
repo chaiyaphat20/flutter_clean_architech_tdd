@@ -7,33 +7,32 @@ import 'package:mocktail/mocktail.dart';
 
 import 'create_user_test.dart';
 
-void main(){
+void main() {
   late AuthenticationRepository repository;
-  late GetUser usecase;
+  late GetUsers usecase;
 
-  setUp((){
+  setUp(() {
     repository = MockAuthRepo();
-    usecase = GetUser(repository);
+    usecase = GetUsers(repository);
   });
 
   const tResponse = [User.empty()];
 
-  test('should call the [AuthRepo.getUser] and return [List<User>]',  ()async {
+  test('should call the [AuthRepo.getUser] and return [List<User>]', () async {
     //Arrange
-    when(() => repository.getUsers()).thenAnswer((_) async=> Right(tResponse));
+    when(() => repository.getUsers()).thenAnswer((_) async => Right(tResponse));
 
-    //Act 
+    //Act
     final result = await usecase();
     final user = result.getOrElse(() => tResponse); // ดึงค่า User จาก Right
     print(user[0].name); //_empty.name
     print(user[0].avatar); //_empty.avatar
-    print(user[0].id);//1
-    print(user[0].createdAt);//_empty.createdAt
+    print(user[0].id); //1
+    print(user[0].createdAt); //_empty.createdAt
 
     //Expect
-    expect(result, equals(const Right<dynamic,List<User>>(tResponse)));
+    expect(result, equals(const Right<dynamic, List<User>>(tResponse)));
     verify(() => repository.getUsers()).called(1);
     verifyNoMoreInteractions(repository);
   });
-
 }
