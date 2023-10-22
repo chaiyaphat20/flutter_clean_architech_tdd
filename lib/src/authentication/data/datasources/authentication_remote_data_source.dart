@@ -14,6 +14,7 @@ abstract class AuthenticationRemoteDataSource {
     required String avatar,
   });
 
+  //1
   Future<List<UserModel>> getUsers();
 }
 
@@ -53,6 +54,7 @@ class AuthRemoteDataSourceImpl implements AuthenticationRemoteDataSource {
     }
   }
 
+  //2
   @override
   Future<List<UserModel>> getUsers() async {
     try {

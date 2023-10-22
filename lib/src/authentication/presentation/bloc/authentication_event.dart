@@ -22,6 +22,7 @@ class CreateUserEvent extends AuthenticationEvent {
   List<Object> get props => [createdAt, name, avatar];
 }
 
+//1A
 class GetUserEvent extends AuthenticationEvent {
   const GetUserEvent();
 }

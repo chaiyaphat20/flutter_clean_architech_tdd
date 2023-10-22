@@ -37,6 +37,7 @@ class AuthenticationBloc
         (_) => emit(const UsersCreated()));
   }
 
+  //2A
   Future<void> _getUserHandler(
       GetUserEvent event, Emitter<AuthenticationState> emit) async {
     final result = await _getUsers();

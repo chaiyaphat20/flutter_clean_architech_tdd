@@ -8,6 +8,7 @@ class GetUsers extends UseCaseWithoutParams<List<User>> {
 
   final AuthenticationRepository _repository;
 
+  //5
   @override
   ResultFuture<List<User>> call() async => _repository.getUsers();
 }

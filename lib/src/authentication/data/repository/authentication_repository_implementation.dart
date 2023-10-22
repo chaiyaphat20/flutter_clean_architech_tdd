@@ -34,6 +34,7 @@ class AuthenticationRepositoryImplementation
     }
   }
 
+  //4
   @override
   ResultFuture<List<User>> getUsers() async {
     try {
