@@ -20,7 +20,7 @@ void main() {
 
   //t ย่อมาจาก test
   final tException =
-      APIException(message: 'Unknown Error Occurred ', statusCode: 500);
+  APIException(message: 'Unknown Error Occurred ', statusCode: 500);
 
   group('createUser', () {
     const createdAt = 'whatever.createdAt';
@@ -29,35 +29,38 @@ void main() {
 
     test(
         'should call the [RemoteDataSource.createUser] and complete '
-        'successfully when the call to the remote source is successful',
-        () async {
-      ////check that remote source's createUser gets and with right data.
-      //Arrange
-      when(() => remoteDataSource.createUser(
-            createdAt: any(named: 'createdAt'),
-            name: any(named: 'name'),
-            avatar: any(named: 'avatar'),
-          )).thenAnswer((_) async => Future.value());
+            'successfully when the call to the remote source is successful',
+            () async {
+          ////check that remote source's createUser gets and with right data.
+          //Arrange
+          when(() =>
+              remoteDataSource.createUser(
+                createdAt: any(named: 'createdAt'),
+                name: any(named: 'name'),
+                avatar: any(named: 'avatar'),
+              )).thenAnswer((_) async => Future.value());
 
-      //Act
-      final result = await repoImpl.createUser(
-          createdAt: createdAt, name: name, avatar: avatar);
+          //Act
+          final result = await repoImpl.createUser(
+              createdAt: createdAt, name: name, avatar: avatar);
 
-      //Assert
-      expect(result, equals(const Right(null)));
+          //Assert
+          expect(result, equals(const Right(null)));
 
-      //check ว่าเรา call repoImpl.createUser  ด้วย params ตัวเดียวกัน ไป 1 ครั้งจริงมั้ย
-      verify(() => remoteDataSource.createUser(
-          createdAt: createdAt, name: name, avatar: avatar)).called(1);
+          //check ว่าเรา call repoImpl.createUser  ด้วย params ตัวเดียวกัน ไป 1 ครั้งจริงมั้ย
+          verify(() =>
+              remoteDataSource.createUser(
+                  createdAt: createdAt, name: name, avatar: avatar)).called(1);
 
-      verifyNoMoreInteractions(remoteDataSource);
-    });
+          verifyNoMoreInteractions(remoteDataSource);
+        });
 
     test(
         'should return a [ServerFailure] when the call to the remote'
-        'source is unsuccessfully', () async {
+            'source is unsuccessfully', () async {
       //Arrange
-      when(() => remoteDataSource.createUser(
+      when(() =>
+          remoteDataSource.createUser(
             createdAt: any(named: 'createdAt'),
             name: any(named: 'name'),
             avatar: any(named: 'avatar'),
@@ -74,8 +77,9 @@ void main() {
               message: tException.message,
               statusCode: tException.statusCode))));
 
-      verify(() => remoteDataSource.createUser(
-          createdAt: createdAt, name: name, avatar: avatar)).called(1);
+      verify(() =>
+          remoteDataSource.createUser(
+              createdAt: createdAt, name: name, avatar: avatar)).called(1);
       verifyNoMoreInteractions(remoteDataSource);
     });
   });
@@ -83,14 +87,25 @@ void main() {
   group('getUser', () {
     test(
         'should call the [RemoteDataSource.getUser] and'
-        'return [List<User>]  when call to remote source is successful',
-        () async {
-      when(() => remoteDataSource.getUsers()).thenAnswer((_) async => []);
-      final result = await repoImpl.getUsers();
-      expect(result, isA<Right<dynamic, List<User>>>());
-      verify(() => remoteDataSource.getUsers()).called(1);
+            'return [List<User>]  when call to remote source is successful',
+            () async {
+          when(() => remoteDataSource.getUsers()).thenAnswer((_) async => []);
+          final result = await repoImpl.getUsers();
+          expect(result, isA<Right<dynamic, List<User>>>());
+          verify(() => remoteDataSource.getUsers()).called(1);
+          verifyNoMoreInteractions(remoteDataSource);
+        });
 
-      verifyNoMoreInteractions(remoteDataSource);
-    });
+    test(
+        'should call the [APIFailure]  when call to remote source is unsuccessful',
+            () async {
+          when(() => remoteDataSource.getUsers()).thenThrow(tException);
+
+          final result = await repoImpl.getUsers();
+
+          expect(result, equals(Left(APIFailure.fromException(tException))));
+          verify(() => remoteDataSource.getUsers()).called(1);
+          verifyNoMoreInteractions(remoteDataSource);
+        });
   });
 }
